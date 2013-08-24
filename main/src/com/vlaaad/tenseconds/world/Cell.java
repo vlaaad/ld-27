@@ -7,7 +7,7 @@ import com.vlaaad.common.events.EventType;
  */
 public class Cell {
     public static enum Level {
-        ONE, TWO, THREE
+        ONE, /*TWO, */THREE
     }
 
     public static final EventType<Cell> LEVEL_CHANGED = new EventType<Cell>();

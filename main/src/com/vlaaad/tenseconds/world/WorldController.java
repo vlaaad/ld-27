@@ -9,6 +9,7 @@ public abstract class WorldController {
     void doInit(World world) {
         this.world = world;
         init();
+        doResume();
     }
 
     void doAct(float delta) {
@@ -26,4 +27,18 @@ public abstract class WorldController {
     }
 
     protected abstract void destroy();
+
+    void doPause() {
+        pause();
+    }
+
+    void doResume() {
+        resume();
+    }
+
+    protected void resume() {
+    }
+
+    protected void pause() {
+    }
 }

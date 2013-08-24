@@ -34,5 +34,11 @@
             "down": "menu-btn-down",
             "disabled": "btn-disabled"
         }
+    },
+    com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
+        default: {
+            titleFont: default,
+            stageBackground: pause-background
+        }
     }
 }

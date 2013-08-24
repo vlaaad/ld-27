@@ -1,9 +1,11 @@
 package com.vlaaad.tenseconds.world.controllers;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -26,7 +28,7 @@ public class ViewController extends WorldController {
 
     static {
         colors.put(Cell.Level.ONE, Color.GREEN);
-        colors.put(Cell.Level.TWO, Color.YELLOW);
+//        colors.put(Cell.Level.TWO, Color.YELLOW);
         colors.put(Cell.Level.THREE, Color.RED);
     }
 
@@ -63,6 +65,16 @@ public class ViewController extends WorldController {
             }
         });
     }
+
+//    @Override
+//    protected void pause() {
+//        root.setTouchable(Touchable.disabled);
+//    }
+//
+//    @Override
+//    protected void resume() {
+//        root.setTouchable(Touchable.enabled);
+//    }
 
     @Override
     protected void destroy() {
@@ -135,6 +147,13 @@ public class ViewController extends WorldController {
             int time = (int) cell.time;
             CellView view = viewMap.get(cell);
             view.setText(String.valueOf(time));
+            float px = cell.getX() * cellSize;
+            float py = cell.getY() * cellSize;
+            if (time <= 2) {
+                view.setPosition(px + MathUtils.random(-1, 1), py + MathUtils.random(-1, 1));
+            } else {
+                view.setPosition(px, py);
+            }
         }
     }
 

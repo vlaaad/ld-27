@@ -2,6 +2,7 @@ package com.vlaaad.tenseconds.world.controllers;
 
 import com.vlaaad.common.events.EventType;
 import com.vlaaad.common.events.Listener;
+import com.vlaaad.common.logging.Logger;
 import com.vlaaad.tenseconds.world.Cell;
 import com.vlaaad.tenseconds.world.WorldController;
 
@@ -27,7 +28,6 @@ public class GameController extends WorldController {
     private final Listener<Cell> onLose = new Listener<Cell>() {
         @Override
         public void handle(EventType<Cell> type, Cell cell) {
-            world.removeController(RulesController.class);
             results(false);
         }
     };
@@ -35,7 +35,6 @@ public class GameController extends WorldController {
     private final Listener<Void> onWin = new Listener<Void>() {
         @Override
         public void handle(EventType<Void> type, Void aVoid) {
-            world.removeController(RulesController.class);
             results(true);
         }
     };

@@ -1,8 +1,11 @@
 package com.vlaaad.common;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 /**
@@ -17,6 +20,15 @@ public abstract class State {
         if (!initialized) {
             initialized = true;
             stage = new Stage(ScreenConfig.width, ScreenConfig.height, true);
+            stage.addListener(new InputListener() {
+                @Override
+                public boolean keyUp(InputEvent event, int keycode) {
+                    if (keycode == Input.Keys.BACK || keycode == Input.Keys.ESCAPE) {
+                        onBackPressed();
+                    }
+                    return false;
+                }
+            });
             init();
         }
         if (!shown) {
@@ -24,6 +36,10 @@ public abstract class State {
             Gdx.input.setInputProcessor(stage);
             resume();
         }
+    }
+
+    protected void onBackPressed() {
+        Gdx.app.exit();
     }
 
     final void doRender(float delta) {
@@ -56,7 +72,7 @@ public abstract class State {
         dispose();
     }
 
-    final void doResize(){
+    final void doResize() {
         resize(ScreenConfig.width, ScreenConfig.height);
     }
 
@@ -71,11 +87,11 @@ public abstract class State {
     protected abstract void resume();
 
     /**
-     *
-     * @param width screen size
+     * @param width  screen size
      * @param height screen size
      */
     protected abstract void resize(float width, float height);
+
     /**
      * Called when the state should render itself.
      *

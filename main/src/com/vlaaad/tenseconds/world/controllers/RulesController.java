@@ -1,5 +1,6 @@
 package com.vlaaad.tenseconds.world.controllers;
 
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.vlaaad.common.events.EventType;
 import com.vlaaad.common.events.Listener;
 import com.vlaaad.tenseconds.world.Cell;
@@ -36,10 +37,11 @@ public class RulesController extends WorldController {
             return;
         //cell is enabled, can act!
         cell.time = 10;
-        for (Cell other : world) {
-            other.setEnabled(true);
-        }
-        cell.setEnabled(false);
+//        for (Cell other : world) {
+//            other.setEnabled(true);
+//        }
+//        cell.setEnabled(false);
+//        Actions
         activate(x - 1, y);
         activate(x + 1, y);
         activate(x, y - 1);

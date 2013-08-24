@@ -19,7 +19,7 @@ public abstract class App implements ApplicationListener {
         float density = getDensity(Gdx.graphics.getDensity());
         ScreenConfig.width = (int) (Gdx.graphics.getWidth() / (density * getScreenScale()));
         ScreenConfig.height = (int) (Gdx.graphics.getHeight() / (density * getScreenScale()));
-
+        Gdx.input.setCatchBackKey(true);
         onCreate();
     }
 

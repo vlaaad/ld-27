@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.vlaaad.common.events.EventDispatcher;
 import com.vlaaad.common.events.EventType;
 import com.vlaaad.common.grid.BoundedGrid2D;
+import com.vlaaad.common.logging.Logger;
 
 import java.util.Iterator;
 
@@ -11,15 +12,19 @@ import java.util.Iterator;
  * Created 24.08.13 by vlaaad
  */
 public class World implements Iterable<Cell> {
-    public static final int SIZE = 3;
 
     public static final EventType<Cell> CELL_ADDED = new EventType<Cell>();
     public static final EventType<Cell> CELL_REMOVED = new EventType<Cell>();
 
     public final EventDispatcher dispatcher = new EventDispatcher();
 
-    private final BoundedGrid2D<Cell> grid = new BoundedGrid2D<Cell>(SIZE, SIZE);
+    private final BoundedGrid2D<Cell> grid;
     private final ObjectMap<Class, WorldController> controllerMap = new ObjectMap<Class, WorldController>();
+    private boolean paused;
+
+    public World(int sides) {
+        grid = new BoundedGrid2D<Cell>(sides, sides);
+    }
 
     // ------------- grid ------------- //
 
@@ -78,7 +83,7 @@ public class World implements Iterable<Cell> {
 
     public <T extends WorldController> void removeController(Class<T> type) {
         WorldController c = controllerMap.remove(type);
-        if(c==null)
+        if (c == null)
             return;
         c.doDestroy();
     }
@@ -86,9 +91,32 @@ public class World implements Iterable<Cell> {
     // ------------- act ------------- //
 
     public void act(float delta) {
+        if (paused)
+            return;
         for (WorldController controller : controllerMap.values()) {
             controller.doAct(delta);
         }
     }
 
+    public void resume() {
+        if (!paused)
+            return;
+        paused = false;
+        for (WorldController controller : controllerMap.values()) {
+            controller.doResume();
+        }
+    }
+
+    public void pause() {
+        if (paused)
+            return;
+        paused = true;
+        for (WorldController controller : controllerMap.values()) {
+            controller.doPause();
+        }
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
 }

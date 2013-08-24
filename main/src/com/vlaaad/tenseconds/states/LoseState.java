@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.vlaaad.common.State;
 import com.vlaaad.tenseconds.AppConfig;
@@ -13,15 +14,17 @@ import com.vlaaad.tenseconds.AppConfig;
 /**
  * Created 24.08.13 by vlaaad
  */
-public class MainMenuState extends State {
+public class LoseState extends State {
 
     public static interface Callback {
-        public void onStartNewGame();
+        public void onGoToMainMenu();
+
+        public void onTryAgain();
     }
 
     private final Callback callback;
 
-    public MainMenuState(Callback callback) {
+    public LoseState(Callback callback) {
         this.callback = callback;
     }
 
@@ -29,33 +32,41 @@ public class MainMenuState extends State {
     protected void init() {
         Table table = new Table();
         table.setFillParent(true);
-        TextButton play = new TextButton("play", AppConfig.skin, "menu");
-        play.setColor(Color.GREEN);
-        play.getLabel().setColor(Color.BLACK);
-        play.getLabel().setFontScale(2);
 
-        TextButton exit = new TextButton("exit", AppConfig.skin, "menu");
-        exit.setColor(Color.RED);
-        exit.getLabel().setColor(Color.BLACK);
-        exit.getLabel().setFontScale(2);
+        Label label = new Label("You lose!", AppConfig.skin, "default", Color.RED);
+        label.setAlignment(Align.center);
+        label.setFontScale(2);
 
-        table.add(play).size(50);
-        table.add(exit).size(50);
-        getStage().addActor(table);
-
-        play.addListener(new ChangeListener() {
+        TextButton menu = new TextButton("main menu", AppConfig.skin, "menu");
+        menu.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                callback.onStartNewGame();
+                callback.onGoToMainMenu();
             }
         });
-
+        TextButton exit = new TextButton("exit", AppConfig.skin, "menu");
         exit.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.exit();
             }
         });
+
+        TextButton again = new TextButton("try again", AppConfig.skin, "menu");
+        again.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                callback.onTryAgain();
+            }
+        });
+
+        table.add(label).row();
+        table.add(again).size(60, 20).row();
+        table.add(menu).size(60, 20).row();
+        table.add(exit).size(60, 20).row();
+
+
+        getStage().addActor(table);
     }
 
     @Override
@@ -70,11 +81,11 @@ public class MainMenuState extends State {
 
     @Override
     protected void pause() {
+        //TODO implement
     }
 
     @Override
     protected void dispose() {
         //TODO implement
     }
-
 }
