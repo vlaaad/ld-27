@@ -1,6 +1,8 @@
 package com.vlaaad.tenseconds.world.view;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.vlaaad.common.logging.Logger;
 import com.vlaaad.tenseconds.AppConfig;
 
 /**
@@ -10,8 +12,24 @@ public class CellView extends TextButton {
     private int pad;
 
     public CellView() {
-        super("", AppConfig.skin);
+        super("9", AppConfig.skin);
         getLabel().setFontScale(2);
+    }
+
+
+    @Override
+    public void setSize(float width, float height) {
+        super.setSize(width, height);
+        Label label = getLabel();
+        float h = label.getPrefHeight();
+        float factor = height / h;
+        label.setFontScale(getScale(factor));
+    }
+
+    public float getScale(float real) {
+        float snap = 0.5f;
+        int snaps = Math.round(real / snap);
+        return snaps * snap;
     }
 
     @Override

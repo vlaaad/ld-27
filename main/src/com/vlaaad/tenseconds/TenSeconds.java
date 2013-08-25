@@ -27,7 +27,7 @@ public class TenSeconds extends App {
             mainMenuState = new MainMenuState(new MainMenuState.Callback() {
                 @Override
                 public void onStartNewGame() {
-                    startNewGame(3);
+                    startNewGame(1);
                 }
             });
             setState(mainMenuState);
@@ -64,7 +64,7 @@ public class TenSeconds extends App {
 
                 @Override
                 public void onTryAgain() {
-                    startNewGame(3);
+                    startNewGame(1);
                 }
             }));
         }

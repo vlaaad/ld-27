@@ -2,15 +2,19 @@ package com.vlaaad.tenseconds.world.controllers;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.vlaaad.common.events.EventType;
 import com.vlaaad.common.events.Listener;
+import com.vlaaad.tenseconds.AppConfig;
+import com.vlaaad.tenseconds.world.Bonus;
 import com.vlaaad.tenseconds.world.Cell;
 import com.vlaaad.tenseconds.world.World;
 import com.vlaaad.tenseconds.world.WorldController;
@@ -23,6 +27,7 @@ import com.vlaaad.tenseconds.world.view.CellView;
 public class ViewController extends WorldController {
 
     public static final EventType<CellEvent> ON_TAP = new EventType<CellEvent>();
+    public static final EventType<Bonus> BONUS_SELECTED = new EventType<Bonus>();
 
     private static ObjectMap<Cell.Level, Color> colors = new ObjectMap<Cell.Level, Color>();
 
@@ -37,6 +42,9 @@ public class ViewController extends WorldController {
     private float cellSize;
     private ObjectMap<Cell, CellView> viewMap = new ObjectMap<Cell, CellView>();
     private Table table;
+    private Label bonusPoints;
+    private ObjectMap<ImageTextButton, Bonus> bonusMap = new ObjectMap<ImageTextButton, Bonus>();
+
 
     public ViewController(Stage stage) {
         this.stage = stage;
@@ -49,32 +57,40 @@ public class ViewController extends WorldController {
         table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
-        table.add(root);
-        world.dispatcher.add(World.CELL_ADDED, onCellAdded);
-        world.dispatcher.add(World.CELL_REMOVED, onCellRemoved);
-        world.dispatcher.add(Cell.LEVEL_CHANGED, onLevelChanged);
-        world.dispatcher.add(Cell.ENABLED_STATUS_CHANGED, onEnableStatusChanged);
+
         root.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 int wx = (int) (x / cellSize);
                 int wy = (int) (y / cellSize);
                 Cell cell = world.get(wx, wy);
-                if (cell != null)
+//                if (cell != null)
                     world.dispatcher.dispatch(ON_TAP, new CellEvent(wx, wy, cell));
             }
         });
-    }
 
-//    @Override
-//    protected void pause() {
-//        root.setTouchable(Touchable.disabled);
-//    }
-//
-//    @Override
-//    protected void resume() {
-//        root.setTouchable(Touchable.enabled);
-//    }
+        bonusPoints = new Label("bonus points: 0", AppConfig.skin);
+        bonusPoints.setAlignment(Align.center);
+
+        table.add(bonusPoints).colspan(BonusController.bonuses.size).row();
+        table.add(root).colspan(BonusController.bonuses.size).row();
+        for (Bonus bonus : BonusController.bonuses) {
+            ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle(AppConfig.skin.get(ImageTextButton.ImageTextButtonStyle.class));
+            style.imageUp = AppConfig.skin.getDrawable(bonus.getIconName());
+            ImageTextButton button = new ImageTextButton(bonus.getCost() + " bp", style);
+            button.addListener(createBonusButtonListener(bonus));
+            button.setDisabled(true);
+            table.add(button);
+            bonusMap.put(button, bonus);
+        }
+
+        world.dispatcher.add(World.CELL_ADDED, onCellAdded);
+        world.dispatcher.add(World.CELL_REMOVED, onCellRemoved);
+        world.dispatcher.add(Cell.LEVEL_CHANGED, onLevelChanged);
+        world.dispatcher.add(Cell.ENABLED_STATUS_CHANGED, onEnableStatusChanged);
+        world.dispatcher.add(BonusController.BONUS_POINTS_GAINED, onBonusPointsGained);
+        world.dispatcher.add(BonusController.BONUS_POINTS_SPENT, onBonusPointsSpent);
+    }
 
     @Override
     protected void destroy() {
@@ -83,8 +99,56 @@ public class ViewController extends WorldController {
         world.dispatcher.remove(World.CELL_REMOVED, onCellRemoved);
         world.dispatcher.remove(Cell.LEVEL_CHANGED, onLevelChanged);
         world.dispatcher.remove(Cell.ENABLED_STATUS_CHANGED, onEnableStatusChanged);
+        world.dispatcher.remove(BonusController.BONUS_POINTS_GAINED, onBonusPointsGained);
+        world.dispatcher.remove(BonusController.BONUS_POINTS_SPENT, onBonusPointsSpent);
     }
 
+    private EventListener createBonusButtonListener(final Bonus bonus) {
+        return new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                world.dispatcher.dispatch(BONUS_SELECTED, bonus);
+            }
+        };
+    }
+
+    private final Listener<Integer> onBonusPointsSpent = new Listener<Integer>() {
+        @Override
+        public void handle(EventType<Integer> type, Integer integer) {
+            bonusPoints.setText("bonus points: " + integer);
+        }
+    };
+
+    private final Listener<BonusController.GainBonusPointsEvent> onBonusPointsGained = new Listener<BonusController.GainBonusPointsEvent>() {
+        @Override
+        public void handle(EventType<BonusController.GainBonusPointsEvent> type, final BonusController.GainBonusPointsEvent event) {
+            final Label points = new Label("+" + event.value, AppConfig.skin);
+            stage.addActor(points);
+            final Vector2 tmp = new Vector2(
+                    event.x * cellSize + cellSize / 2 - points.getPrefWidth() / 2,
+                    event.y * cellSize + cellSize / 2 - points.getPrefHeight() / 2);
+            root.localToStageCoordinates(tmp);
+            points.setPosition(tmp.x, tmp.y);
+
+            tmp.set(bonusPoints.getPrefWidth() - points.getPrefWidth(), 0);
+            bonusPoints.localToStageCoordinates(tmp);
+
+            points.addAction(Actions.sequence(
+                    Actions.moveTo(tmp.x, tmp.y, 0.5f),
+                    Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            points.remove();
+                            bonusPoints.setText("bonus points: " + event.total);
+                        }
+                    })
+            ));
+            for (ImageTextButton button : bonusMap.keys()) {
+                Bonus bonus = bonusMap.get(button);
+                button.setDisabled(bonus.getCost() > event.total);
+            }
+        }
+    };
 
     private final Listener<Cell> onCellAdded = new Listener<Cell>() {
         @Override

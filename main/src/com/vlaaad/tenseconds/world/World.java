@@ -21,6 +21,7 @@ public class World implements Iterable<Cell> {
     private final BoundedGrid2D<Cell> grid;
     private final ObjectMap<Class, WorldController> controllerMap = new ObjectMap<Class, WorldController>();
     private boolean paused;
+    public float timeScale = 1;
 
     public World(int sides) {
         grid = new BoundedGrid2D<Cell>(sides, sides);
@@ -93,8 +94,9 @@ public class World implements Iterable<Cell> {
     public void act(float delta) {
         if (paused)
             return;
+        float usedDelta = delta * timeScale;
         for (WorldController controller : controllerMap.values()) {
-            controller.doAct(delta);
+            controller.doAct(usedDelta);
         }
     }
 

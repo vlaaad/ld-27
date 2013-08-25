@@ -3,30 +3,59 @@ ui.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-btn-disabled
+add-green
   rotate: false
   xy: 1, 15
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-btn-down
+add-time
   rotate: false
   xy: 19, 15
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-btn-up
+back
   rotate: false
   xy: 37, 15
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
+btn-disabled
+  rotate: false
+  xy: 55, 15
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+btn-down
+  rotate: false
+  xy: 73, 15
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+btn-up
+  rotate: false
+  xy: 91, 15
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+menu-btn-disabled
+  rotate: false
+  xy: 109, 17
+  size: 14, 14
+  split: 2, 2, 1, 3
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
 menu-btn-down
   rotate: false
-  xy: 55, 17
+  xy: 109, 1
   size: 14, 14
   split: 2, 2, 3, 1
   orig: 14, 14
@@ -34,7 +63,7 @@ menu-btn-down
   index: -1
 menu-btn-up
   rotate: false
-  xy: 55, 1
+  xy: 125, 17
   size: 14, 14
   split: 2, 2, 1, 3
   orig: 14, 14
@@ -42,7 +71,7 @@ menu-btn-up
   index: -1
 pause-background
   rotate: false
-  xy: 71, 30
+  xy: 1, 12
   size: 1, 1
   orig: 1, 1
   offset: 0, 0

@@ -33,20 +33,20 @@ public class RulesController extends WorldController {
     };
 
     private void onTap(int x, int y, Cell cell) {
-        if (!cell.isEnabled())
+        if (cell == null)
+            return;
+        if (!cell.isEnabled()) //not used
             return;
         //cell is enabled, can act!
-        cell.time = 10;
-//        for (Cell other : world) {
-//            other.setEnabled(true);
-//        }
-//        cell.setEnabled(false);
-//        Actions
+        activate(x, y);
+        if (world.get(x, y) != null) {
+            cell.time = 10;
+        }
         activate(x - 1, y);
         activate(x + 1, y);
         activate(x, y - 1);
         activate(x, y + 1);
-        activate(x, y);
+
         if (world.size() == 0) {
             world.dispatcher.dispatch(WIN, null);
         }

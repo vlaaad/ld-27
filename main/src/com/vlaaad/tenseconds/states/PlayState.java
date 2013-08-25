@@ -7,10 +7,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.vlaaad.common.State;
 import com.vlaaad.common.events.EventType;
 import com.vlaaad.common.events.Listener;
-import com.vlaaad.common.logging.Logger;
 import com.vlaaad.tenseconds.AppConfig;
 import com.vlaaad.tenseconds.world.Cell;
 import com.vlaaad.tenseconds.world.World;
+import com.vlaaad.tenseconds.world.controllers.BonusController;
 import com.vlaaad.tenseconds.world.controllers.GameController;
 import com.vlaaad.tenseconds.world.controllers.RulesController;
 import com.vlaaad.tenseconds.world.controllers.ViewController;
@@ -69,6 +69,7 @@ public class PlayState extends State implements Listener<GameController.Results>
         world.addController(new ViewController(getStage()));
         world.addController(new RulesController());
         world.addController(new GameController());
+        world.addController(new BonusController());
 
         Cell cell = new Cell();
 
